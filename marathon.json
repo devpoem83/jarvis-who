@@ -1,0 +1,67 @@
+{
+  "id": "/jarvis/jarvis-who",
+  "cmd": null,
+  "cpus": 1,
+  "mem": 1024,
+  "disk": 0,
+  "instances": 1,
+  "acceptedResourceRoles": [
+    "*"
+  ],
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "forcePullImage": false,
+      "image": "repo.eduwill.net:12000/jarvis-who:v1",
+      "parameters": [],
+      "privileged": false
+    },
+    "volumes": [{
+        "containerPath": "/etc/localtime",
+        "hostPath": "/etc/localtime",
+        "mode": "RO"
+      },
+      {
+        "containerPath": "/usr/local/go/logs/d-jarvis-who",
+        "hostPath": "/var/log/go/d-jarvis-who",
+        "mode": "RW"
+      }
+    ],
+    "portMappings": [{
+      "containerPort": 8080,
+      "hostPort": 0,
+      "labels": {},
+      "protocol": "tcp",
+      "servicePort": 10040
+    }]
+  },
+  "env": {
+    "env": "dev",
+    "TZ": "Asia/Seoul"
+  },
+  "healthChecks": [{
+    "gracePeriodSeconds": 300,
+    "intervalSeconds": 60,
+    "maxConsecutiveFailures": 3,
+    "portIndex": 0,
+    "protocol": "TCP",
+    "ipProtocol": "IPv4",
+    "timeoutSeconds": 20,
+    "delaySeconds": 15
+  }],
+  "labels": {
+    "HAPROXY_0_MODE": "HTTP",
+    "HAPROXY_GROUP": "marathon-ext",
+    "HAPROXY_0_VHOST": "d-jarvis-who.eduwill.net"
+  },
+  "networks": [{
+    "mode": "container/bridge"
+  }],
+  "portDefinitions": [],
+  "fetch": [{
+    "uri": "file:///etc/docker-repo.tar.gz",
+    "extract": true,
+    "executable": false,
+    "cache": false
+  }]
+}

@@ -1,0 +1,25 @@
+server:
+    host: localhost
+    domain: l-land-api.eduwill.net
+    port: 8080
+datasource:
+    ganagosi:
+        server: 172.16.30.21
+        name: ganagosi_net2
+        user: ganagosi_net
+        password: "!dnlf100djr"
+        options:
+            port: 14000
+            readOnlyIntent: false
+            encrypt: false
+    log:
+        server: 172.16.30.21
+        name: EDULOG
+        user: LogUser
+        password: "s!7kuwer"
+        options:
+            port: 14000
+            readOnlyIntent: false
+            encrypt: false
+logger:
+    level: debug

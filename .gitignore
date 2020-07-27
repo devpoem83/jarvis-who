@@ -1,0 +1,10 @@
+.idea
+gin-bin
+
+# Editor directories and files
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.exe

@@ -1,0 +1,58 @@
+sample:
+    list: >
+        select a.ID as id
+                ,a.CONTENT as content
+                ,a.REG_ID as regId
+                ,a.REG_DT as regDt
+        from LANDUS_TEST As a with(nolock)
+        where 1=1
+        and DEL_YN = 'N'
+        order by a.ID desc
+
+    read: >
+        declare @P_ID int = #{id}
+
+        select a.ID as id
+                ,a.CONTENT as content
+                ,a.REG_ID as regId
+                ,a.REG_DT as regDt
+        from LANDUS_TEST As a with(nolock)
+        where 1=1
+        and a.ID = @P_ID
+
+    create: >
+        declare @P_CONTENT varchar(max) = #{content}
+                ,@P_USER_ID varchar(20) = #{userId}
+
+        insert into LANDUS_TEST(CONTENT, REG_ID)
+        values(@P_CONTENT, @P_USER_ID)
+
+        select @@IDENTITY as value
+
+    update: >
+        declare @P_ID int = #{id}
+                ,@P_USER_ID varchar(20) = #{userId}
+                ,@P_CONTENT varchar(max) = #{content}
+                
+        update LANDUS_TEST
+        set CONTENT = @P_CONTENT
+        where 1=1
+        and ID = @P_ID
+        and REG_ID = @P_USER_ID
+
+        select @@ROWCOUNT as value
+
+    delete: >
+        declare @P_ID int = #{id}
+                ,@P_USER_ID varchar(20) = #{userId}
+
+        update LANDUS_TEST
+        set DEL_YN = 'Y'
+            ,DEL_ID = @P_USER_ID
+            ,DEL_DT = getdate()
+        where 1=1
+        and ID = @P_ID
+        and REG_ID = @P_USER_ID
+        and DEL_YN = 'N'
+
+        select @@ROWCOUNT as value

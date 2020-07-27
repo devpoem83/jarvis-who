@@ -1,0 +1,51 @@
+auth:
+    user-info: >
+        select a.Pwdsha256 as password
+        from users As a with(nolock)
+        where 1=1
+        and a.id = #{userId}
+    read-token: >
+        declare  @P_REFRESH_TOKEN varchar(300) = #{refreshToken}
+                ,@P_ACCESS_TOKEN varchar(300) = #{accessToken}    
+
+        select top 1 a.CREATE_ID as userId
+        from JARVIS_TOKEN As a with(nolock)
+        where 1=1
+        and TOKEN = @P_REFRESH_TOKEN
+        and ACES_TOKEN = @P_ACCESS_TOKEN
+        and TOKEN_VALID_DT >= getdate()
+        and CANCEL_YN = 'N'
+    add-token: >
+        declare  @P_USER_ID varchar(20) = #{userId}
+                ,@P_REFRESH_TOKEN varchar(300) = #{refreshToken}
+                ,@P_ACCESS_TOKEN varchar(300) = #{accessToken}
+                ,@P_MAKE_TYPE char(1) = #{makeType}
+
+        update JARVIS_TOKEN
+        set TOKEN_VALID_DT = dateadd(s, -1, getdate())
+        where 1=1
+        and CREATE_ID = @P_USER_ID
+        and TOKEN_VALID_DT >= getdate()
+        and CANCEL_YN = 'N'
+
+        insert into JARVIS_TOKEN (TOKEN, ACES_TOKEN, TOKEN_VALID_DT, CREATE_ID, CREATE_TYPE)
+        values(@P_REFRESH_TOKEN, @P_ACCESS_TOKEN, dateadd(d, 1, getdate()), @P_USER_ID, @P_MAKE_TYPE)
+
+        select @@IDENTITY as idx
+    update-token: >
+        declare  @P_USER_ID varchar(20) = #{userId}
+                ,@P_REFRESH_TOKEN varchar(300) = #{refreshToken}
+                ,@P_OLD_ACCESS_TOKEN varchar(300) = #{oldAccessToken}
+                ,@P_NEW_ACCESS_TOKEN varchar(300) = #{newAccessToken}
+
+        update JARVIS_TOKEN
+        set ACES_TOKEN = @P_NEW_ACCESS_TOKEN
+            ,MOD_ID = @P_USER_ID
+            ,MOD_DT = getdate()
+        where 1=1
+        and TOKEN_VALID_DT >= getdate()
+        and CANCEL_YN = 'N'
+        and TOKEN = @P_REFRESH_TOKEN
+        and ACES_TOKEN = @P_OLD_ACCESS_TOKEN
+
+        select @@ROWCOUNT as CNT
